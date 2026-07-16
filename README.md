@@ -117,7 +117,7 @@ Completed:
 
 ---
 
-### Phase 5 — CSI Volume Integration 🚧
+### Phase 5 — CSI Volume Integration 
 
 Current work:
 

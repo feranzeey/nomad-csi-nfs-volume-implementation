@@ -55,7 +55,7 @@ nomad-csi-nfs-volume-implementation/
 
 ## Progress
 
-### Phase 1 — Research ✅
+### Phase 1 — Research 
 
 - Studied Nomad CSI architecture
 - Reviewed CSI plugins
@@ -64,7 +64,7 @@ nomad-csi-nfs-volume-implementation/
 
 ---
 
-### Phase 2 — Environment Setup ✅
+### Phase 2 — Environment Setup 
 
 Completed:
 
@@ -83,7 +83,7 @@ nomad server members
 
 ---
 
-### Phase 3 — NFS Configuration ✅
+### Phase 3 — NFS Configuration 
 
 Completed:
 
@@ -104,7 +104,7 @@ cat /etc/exports
 
 ---
 
-### Phase 4 — Nomad Project Setup ✅
+### Phase 4 — Nomad Project Setup 
 
 Completed:
 

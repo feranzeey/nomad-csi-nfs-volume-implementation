@@ -1,4 +1,4 @@
-job "nginx-nfs" {
+job "nginx" {
   datacenters = ["dc1"]
   type = "service"
 
@@ -6,15 +6,15 @@ job "nginx-nfs" {
 
     network {
       port "http" {
-        static = 8080
+        to = 80
       }
     }
 
-    volume "data" {
+    volume "shared-volume" {
       type            = "csi"
       source          = "nfs-volume"
-      access_mode     = "single-node-writer"
       attachment_mode = "file-system"
+      access_mode     = "multi-node-multi-writer"
       read_only       = false
     }
 
@@ -23,14 +23,12 @@ job "nginx-nfs" {
 
       config {
         image = "nginx:latest"
-
         ports = ["http"]
       }
 
       volume_mount {
-        volume      = "data"
+        volume      = "shared-volume"
         destination = "/usr/share/nginx/html"
-        read_only   = false
       }
 
       resources {

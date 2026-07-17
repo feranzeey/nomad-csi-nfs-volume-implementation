@@ -1,31 +1,33 @@
 # Nomad CSI NFS Volume Implementation
 
-## Overview
+## Project Overview
 
-This project explores the implementation of Nomad CSI (Container Storage Interface) volumes using Network File System (NFS) as shared storage. The objective is to understand how Nomad provisions and manages persistent storage for containerized workloads using a network-attached storage backend.
+This project demonstrates the implementation of persistent storage for HashiCorp Nomad workloads using the CSI (Container Storage Interface) NFS plugin.
 
-The project includes research, environment setup, implementation, validation, troubleshooting, and documentation.
+The implementation provisions an NFS-backed CSI volume, deploys an NGINX application that consumes the volume, and validates persistent storage by confirming that data survives application restarts.
 
 ---
 
 ## Objectives
 
-- Understand Nomad CSI architecture
-- Configure an NFS server as shared storage
-- Integrate NFS with Nomad CSI
-- Deploy workloads using persistent volumes
-- Validate volume attachment and persistence
-- Document the implementation process and findings
+- Deploy HashiCorp Nomad
+- Configure Docker runtime
+- Configure an NFS server
+- Deploy the Nomad CSI NFS plugin
+- Register an NFS-backed CSI volume
+- Deploy an application using persistent storage
+- Validate data persistence after application restart
 
 ---
 
-## Technology Stack
+## Technologies Used
 
-- Ubuntu 24.04 LTS
-- Nomad v1.11.2
+- HashiCorp Nomad
 - Docker
 - NFS Server
-- NFS Client
+- CSI (Container Storage Interface)
+- Ubuntu (WSL2)
+- Linux CLI
 - Git
 - GitHub
 
@@ -34,53 +36,101 @@ The project includes research, environment setup, implementation, validation, tr
 ## Project Structure
 
 ```
-nomad-csi-nfs-volume-implementation/
+nomad-project/
 │
-├── documentation/
-│   ├── research.md
-│   ├── implementation-report.md
-│   └── troubleshooting.md
-│
-├── nomad-project/
-│   ├── nginx.nomad
-│   ├── volume.hcl
-│   └── jobs/
-│
+├── app.nomad
+├── nginx.nomad
+├── nginx2.nomad
+├── nfs-csi-plugin.nomad
+├── volume.hcl
 ├── screenshots/
-│
 └── README.md
 ```
 
 ---
 
-## Progress
+## Implementation Steps
 
-### Phase 1 — Research 
+### 1. Installed Nomad
 
-- Studied Nomad CSI architecture
-- Reviewed CSI plugins
-- Compared storage backends
-- Selected NFS for implementation
+Configured the Nomad server and client for local development.
 
 ---
 
-### Phase 2 — Environment Setup 
+### 2. Installed Docker
 
-Completed:
+Configured Docker as the container runtime for Nomad.
 
-- Installed Ubuntu 24.04
-- Installed Docker
-- Installed Nomad
-- Verified Nomad installation
-- Started Nomad development agent
+---
+
+### 3. Configured NFS Server
+
+Created the shared directory:
+
+```
+/srv/nomad-storage
+```
+
+Configured exports and verified successful NFS mounting.
+
+---
+
+### 4. Deployed CSI Plugin
+
+Registered the NFS CSI plugin with Nomad.
+
+Verified:
+
+- Healthy controller
+- Healthy node plugin
+
+---
+
+### 5. Registered CSI Volume
+
+Created an NFS-backed CSI volume using:
+
+```
+volume.hcl
+```
+
+Volume capability:
+
+- multi-node-multi-writer
+- file-system
+
+---
+
+### 6. Deployed NGINX
+
+Configured Nomad job:
+
+- CSI volume
+- Volume mount
+- Docker driver
+- NGINX container
+
+---
+
+### 7. Storage Validation
+
+Created a file inside the mounted volume:
+
+```
+echo "Persistent Data" > /usr/share/nginx/html/test.txt
+```
+
+Stopped the application.
+
+Redeployed the application.
 
 Verified:
 
 ```
-nomad version
-nomad server members
-```
+cat /usr/share/nginx/html/test.txt
 
+Persistent Data
+```
 ---
 
 ### Phase 3 — NFS Configuration 
@@ -140,76 +190,84 @@ Planned:
 - Restart allocation
 - Validate data persistence
 
+This confirmed successful persistent storage.
+952013d (Update README, documentation, screenshots and project files)
+
 ---
 
 ## Challenges Encountered
 
-- WSL2 limitations for NFS server
-- Nomad API connectivity troubleshooting
-- Git authentication using GitHub Personal Access Token
-- Remote repository synchronization
-- CSI volume registration troubleshooting
+### Volume Max Claims Reached
+
+Initially the deployment failed because the CSI volume was configured as:
+
+```
+single-node-writer
+```
+
+which prevented additional allocations from claiming the volume.
+
+### Resolution
+
+Updated the volume configuration to:
+
+```
+access_mode = "multi-node-multi-writer"
+```
+
+Recreated the volume and successfully redeployed the workload.
 
 ---
 
-## Lessons Learned
+## Validation Results
 
-- Understanding Nomad CSI architecture
-- Difference between host volumes and CSI volumes
-- NFS server configuration
-- Persistent storage concepts
-- Nomad job lifecycle
-- Git repository management
-- Infrastructure troubleshooting
-
----
-
-## Current Status
-
-**Project Status:** In Progress
-
-Completed:
-
-- Research
-- Environment Setup
-- Nomad Installation
-- Docker Installation
-- NFS Server Configuration
-- Git Repository Setup
-
-Currently Working On:
-
-- CSI Volume Creation
-- Volume Registration
-- Workload Deployment
-- Storage Validation
+| Test | Status |
+|------|--------|
+| Nomad Installation |  Passed |
+| Docker Runtime |  Passed |
+| NFS Server | Passed |
+| CSI Plugin Deployment | Passed |
+| Volume Registration |  Passed |
+| Application Deployment | Passed |
+| Volume Mount |  Passed |
+| Persistent Storage Validation |  Passed |
 
 ---
 
-## Next Steps
+## Screenshots
 
-- Complete CSI volume registration
-- Deploy application using NFS-backed storage
-- Validate persistence after restart
-- Capture implementation screenshots
-- Complete final report
-- Push completed project to GitHub
+Include screenshots for:
+
+- Nomad server running
+- CSI plugin healthy
+- Volume registration
+- NGINX deployment
+- Persistent Storage Validation Success
+- GitHub repository
 
 ---
 
-## References
+## Repository
 
-- https://developer.hashicorp.com/nomad
-- https://developer.hashicorp.com/nomad/docs/other-specifications/volume/csi
-- https://developer.hashicorp.com/nomad/docs/job-specification
-- https://kubernetes-csi.github.io/docs/
+GitHub:
+
+https://github.com/feranzeey/nomad-csi-nfs-volume-implementation
+
+---
+
+## Outcome
+
+Successfully implemented persistent storage for Nomad workloads using the NFS CSI plugin and validated data persistence across workload redeployments.
 
 ---
 
 ## Author
 
-**Oluwaferanmi Dada**
+**Oluwaferanmi Emmanuel**
 
 DevOps Engineer 
 
 GitHub: https://github.com/feranzeey
+
+DevOps Engineer
+952013d (Update README, documentation, screenshots and project files)

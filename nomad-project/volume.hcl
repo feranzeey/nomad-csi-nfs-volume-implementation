@@ -5,7 +5,7 @@ type      = "csi"
 plugin_id = "nfs"
 
 capability {
-  access_mode     = "single-node-writer"
+  access_mode     = "multi-node-multi-writer"
   attachment_mode = "file-system"
 }
 
@@ -14,6 +14,6 @@ mount_options {
 }
 
 parameters = {
-  server = "172.24.240.1"
+  server = "172.17.5.59"
   share  = "/srv/nomad-storage"
 }

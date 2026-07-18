@@ -7,6 +7,20 @@ This project demonstrates the implementation of persistent storage for HashiCorp
 The implementation provisions an NFS-backed CSI volume, deploys an NGINX application that consumes the volume, and validates persistent storage by confirming that data survives application restarts.
 
 ---
+## Architecture Diagram
+
+![Nomad CSI NFS Architecture](screenshots/architecture-diagram.png)
+
+### Architecture Description
+
+1. The developer submits a Nomad job.
+2. The Nomad Server schedules the workload.
+3. The Nomad Client requests the CSI plugin to mount the storage.
+4. The CSI plugin mounts the NFS export.
+5. The NGINX container uses the mounted storage.
+6. Data persists after the application restarts.
+
+---
 
 ## Objectives
 
@@ -191,7 +205,6 @@ Planned:
 - Validate data persistence
 
 This confirmed successful persistent storage.
-952013d (Update README, documentation, screenshots and project files)
 
 ---
 
@@ -270,4 +283,3 @@ DevOps Engineer
 GitHub: https://github.com/feranzeey
 
 DevOps Engineer
-952013d (Update README, documentation, screenshots and project files)
